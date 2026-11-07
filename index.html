@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Один вопрос</title>
+<style>
+:root{--bg:#2a0a18;--pink:#ff5c8a;--cream:#fff1f3;--wine:#5a1530}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(circle at 50% 30%,#4a1229,var(--bg));color:var(--cream);font-family:Georgia,"Times New Roman",serif;overflow:hidden;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+.screen.on{display:flex}
+h1{font-size:2.4rem;font-weight:400;font-style:italic;margin:0 0 36px;line-height:1.2;max-width:14em}
+.row{display:flex;gap:16px}
+button{font:inherit;font-size:1.25rem;padding:14px 36px;border-radius:999px;border:2px solid var(--pink);background:transparent;color:var(--cream);cursor:pointer}
+button.yes{background:var(--pink);color:#2a0a18;font-weight:700}
+button:active{transform:scale(.96)}
+#wait p{font-size:1.5rem;font-style:italic;max-width:14em;line-height:1.4}
+/* hearts */
+#love .big{width:min(70vw,300px);animation:beat 1s infinite;filter:drop-shadow(0 0 30px var(--pink));z-index:2}
+#love h1{margin:24px 0 0;z-index:2;font-size:2rem}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.15)}30%{transform:scale(1)}45%{transform:scale(1.1)}}
+.fly{position:fixed;pointer-events:none;z-index:1;will-change:transform,opacity}
+/* windows */
+#err{background:#008080;font-family:"Segoe UI",Tahoma,Arial,sans-serif;color:#000}
+.win{width:min(92vw,360px);background:#f0f0f0;border:1px solid #0a246a;box-shadow:6px 6px 0 rgba(0,0,0,.35);text-align:left;animation:pop .25s}
+@keyframes pop{from{transform:scale(.7);opacity:0}}
+.win .bar{background:linear-gradient(90deg,#0a246a,#3a6ea5);color:#fff;padding:6px 8px;font-size:.9rem;display:flex;justify-content:space-between}
+.win .body{display:flex;gap:14px;padding:18px;font-size:.95rem;line-height:1.4}
+.win .ico{flex:none;width:34px;height:34px;border-radius:50%;background:#d00;color:#fff;font-weight:700;display:grid;place-items:center}
+.win .btns{padding:0 18px 16px;text-align:right}
+.win button{font-family:inherit;font-size:.95rem;padding:5px 22px;border-radius:2px;border:1px solid #444;background:#e1e1e1;color:#000}
+#bsod{background:#0078d7;color:#fff;font-family:"Segoe UI",Tahoma,Arial,sans-serif;align-items:flex-start;text-align:left;justify-content:center}
+#bsod .face{font-size:6rem;line-height:1;margin-bottom:12px}
+#bsod p{font-size:1.1rem;line-height:1.5;margin:0 0 14px;max-width:26em}
+#bsod small{opacity:.85}
+#bsod button{border-radius:0;border:2px solid #fff;font-family:inherit;font-size:1rem;margin-top:14px}
+.shake{animation:shake .4s 3}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@media (prefers-reduced-motion:reduce){#love .big{animation:none}}
+</style>
+</head>
+<body>
+
+<div class="screen on" id="q1">
+  <h1>Ты готова?</h1>
+  <div class="row"><button class="yes" id="q1y">Да</button><button id="q1n">Нет</button></div>
+</div>
+
+<div class="screen" id="wait">
+  <p>Тогда зайди, когда будешь готова</p>
+</div>
+
+<div class="screen" id="q2">
+  <h1>Ты готова стать моей девушкой?</h1>
+  <div class="row"><button class="yes" id="q2y">Да</button><button id="q2n">Нет</button></div>
+</div>
+
+<div class="screen" id="love">
+  <svg class="big" viewBox="0 0 32 29" aria-hidden="true"><path fill="#ff5c8a" d="M23.6 0c-2.9 0-5.4 1.6-7.6 4.4C13.800 1.600 11.300 0 8.400 0 3.700 0 0 3.800 0 8.600 0 17 14 27.200 16 29c2-1.800 16-12 16-20.400C32 3.800 28.300 0 23.600 0z"/></svg>
+  <h1>Я люблю тебя</h1>
+</div>
+
+<div class="screen" id="err">
+  <div class="win">
+    <div class="bar"><span>Windows</span><span>✕</span></div>
+    <div class="body"><div class="ico">✕</div><div>Критическая ошибка 0x0000LOVE.<br>Ответ «нет» не поддерживается системой.</div></div>
+    <div class="btns"><button disabled>OK</button></div>
+  </div>
+</div>
+
+<div class="screen" id="bsod">
+  <div class="face">:(</div>
+  <p>На вашем устройстве возникла проблема, и его необходимо перезапустить.</p>
+  <p id="pct">Сбор данных об ошибке: 0%</p>
+  <small>Код остановки: HEART_NOT_FOUND</small>
+  <button id="restart" style="display:none">Перезапустить</button>
+</div>
+
+<script>
+// ВПИШИ СЮДА свой секретный топик из приложения ntfy (любая длинная случайная строка)
+var TOPIC = "CHANGE-ME-secret-topic-123";
+
+function ping(msg){
+  try{ fetch("https://ntfy.sh/"+TOPIC,{method:"POST",body:msg,mode:"no-cors",keepalive:true}); }catch(e){}
+}
+var $ = function(id){return document.getElementById(id)};
+function show(id){
+  document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("on")});
+  $(id).classList.add("on");
+}
+
+ping("👀 Она открыла сайт");
+
+$("q1y").onclick = function(){ ping("✅ «Ты готова?» — ДА"); show("q2"); };
+$("q1n").onclick = function(){ ping("⏳ «Ты готова?» — НЕТ"); show("wait"); };
+$("q2n").onclick = function(){ ping("💔 «Стать моей девушкой?» — НЕТ (показана ошибка Windows)"); crash(); };
+$("q2y").onclick = function(){ ping("💖💖💖 «Стать моей девушкой?» — ДА!!!"); show("love"); hearts(); };
+$("restart").onclick = function(){ ping("🔄 Она перезапустила систему"); show("q2"); };
+
+function crash(){
+  show("err");
+  document.querySelector(".win").classList.add("shake");
+  setTimeout(function(){
+    show("bsod");
+    var n=0, el=$("pct"), b=$("restart");
+    b.style.display="none";
+    var t=setInterval(function(){
+      n+=Math.ceil(Math.random()*12);
+      if(n>=100){n=100;clearInterval(t);b.style.display="inline-block";el.textContent="Требуется перезапуск.";return}
+      el.textContent="Сбор данных об ошибке: "+n+"%";
+    },250);
+  },2200);
+}
+
+var EM=["❤️","💖","💕","💗","💘","💝"];
+function fly(x,y,dx,dy,size,dur){
+  var d=document.createElement("div");
+  d.className="fly";d.textContent=EM[Math.floor(Math.random()*EM.length)];
+  d.style.cssText+="left:"+x+"px;top:"+y+"px;font-size:"+size+"px";
+  document.body.appendChild(d);
+  d.animate([{transform:"translate(0,0) scale(.3)",opacity:1},{transform:"translate("+dx+"px,"+dy+"px) scale(1) rotate("+(Math.random()*80-40)+"deg)",opacity:0}],{duration:dur,easing:"ease-out"}).onfinish=function(){d.remove()};
+}
+function hearts(){
+  var W=innerWidth,H=innerHeight,r=Math.random;
+  // взрыв из центра
+  for(var i=0;i<50;i++){var a=r()*6.28,s=150+r()*Math.max(W,H)*.6;fly(W/2,H/2,Math.cos(a)*s,Math.sin(a)*s,20+r()*30,1500+r()*1500)}
+  // сердечки отовсюду
+  var c=0,t=setInterval(function(){
+    for(var k=0;k<3;k++){
+      var side=Math.floor(r()*4),x,y,dx,dy;
+      if(side==0){x=r()*W;y=H+20;dx=(r()-.5)*120;dy=-(H*.8)}
+      else if(side==1){x=r()*W;y=-20;dx=(r()-.5)*120;dy=H*.8}
+      else if(side==2){x=-20;y=r()*H;dx=W*.8;dy=(r()-.5)*120}
+      else{x=W+20;y=r()*H;dx=-W*.8;dy=(r()-.5)*120}
+      fly(x,y,dx,dy,18+r()*34,2500+r()*2500);
+    }
+    if(++c>400)clearInterval(t);
+  },120);
+}
+</script>
+</body>
+</html>
