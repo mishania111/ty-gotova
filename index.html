@@ -64,7 +64,7 @@ button:active{transform:scale(.96)}
 
 <div class="screen" id="game">
   <canvas class="full" id="cg"></canvas>
-  <div id="hud"><span id="gs">❤️ 0 / 67</span><span id="gl">❤️❤️❤️</span></div>
+  <div id="hud"><span id="gs">❤️ 1401 / Love</span><span id="gl">❤️❤️❤️</span></div>
   <div id="govl"><h1>Сначала маленькая игра</h1><p>Води пальцем влево-вправо. Лови ❤️, а разбитых 💔 избегай. Поймай 15!</p><button class="yes" id="gGo">Играть</button></div>
 </div>
 
@@ -110,7 +110,7 @@ function crash(){
 
 // ---------- игра ----------
 const Game=(()=>{
-  const c=$('cg'),x=c.getContext('2d'),GOAL=67;
+  const c=$('cg'),x=c.getContext('2d'),GOAL=15;
   let px=0,items,fx,score,lives,on=false,loop=false,spawn,last;
   c.addEventListener('pointerdown',e=>px=e.clientX);c.addEventListener('pointermove',e=>px=e.clientX);
   function upd(){$('gs').textContent='❤️ '+score+' / '+GOAL;$('gl').textContent='❤️'.repeat(lives)+'🤍'.repeat(3-lives)}
