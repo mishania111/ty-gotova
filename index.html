@@ -258,4 +258,8 @@ const Blue=(()=>{
     const g=x.createRadialGradient(0,0,0,0,0,sc*14);g.addColorStop(0,'rgba(120,220,255,'+pw+')');g.addColorStop(.35,'rgba(30,140,255,'+pw*.7+')');g.addColorStop(1,'rgba(0,60,200,0)');
     x.fillStyle=g;x.beginPath();x.arc(0,0,sc*14,0,6.283);x.fill();x.restore();
     for(let i=0;i<COL.length;i++){x.fillStyle=COL[i];for(const p of B[i]){x.globalAlpha=.6+.4*Math.sin(T*5+p.ph*3);x.fillRect(p.x,p.y,p.z,p.z)}}
-    x
+    x.globalAlpha=1;
+  }
+  return{start};
+})();
+</script></body></html>
