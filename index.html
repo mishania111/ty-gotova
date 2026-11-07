@@ -1,31 +1,38 @@
 <!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="utf-8">
+<html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Один вопрос</title>
-  <meta name="description" content="Для тебя">
-<meta property="og:title" content="Для тебя">
-<meta property="og:description" content="Открой, когда будешь готова">
-<meta property="og:type" content="website">
+<title>Для тебя</title>
+<meta property="og:title" content="Для тебя"><meta property="og:description" content="Открой, когда будешь готова">
 <style>
-:root{--bg:#2a0a18;--pink:#ff5c8a;--cream:#fff1f3;--wine:#5a1530}
+:root{--bg:#2a0a18;--pink:#ff5c8a;--cream:#fff1f3}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0}
-body{background:radial-gradient(circle at 50% 30%,#4a1229,var(--bg));color:var(--cream);font-family:Georgia,"Times New Roman",serif;overflow:hidden;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-.screen{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+body{background:radial-gradient(circle at 50% 30%,#4a1229,var(--bg));color:var(--cream);font-family:Georgia,serif;overflow:hidden;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:calc(env(safe-area-inset-top) + 20px) 22px calc(env(safe-area-inset-bottom) + 20px)}
 .screen.on{display:flex}
-h1{font-size:2.4rem;font-weight:400;font-style:italic;margin:0 0 36px;line-height:1.2;max-width:14em}
+canvas.full{position:fixed;inset:0;width:100%;height:100%}
+h1{font-size:2.2rem;font-weight:400;font-style:italic;margin:0 0 30px;line-height:1.2;max-width:14em}
 .row{display:flex;gap:16px}
 button{font:inherit;font-size:1.25rem;padding:14px 36px;border-radius:999px;border:2px solid var(--pink);background:transparent;color:var(--cream);cursor:pointer}
 button.yes{background:var(--pink);color:#2a0a18;font-weight:700}
 button:active{transform:scale(.96)}
 #wait p{font-size:1.5rem;font-style:italic;max-width:14em;line-height:1.4}
-/* hearts */
-#love .big{width:min(70vw,300px);animation:beat 1s infinite;filter:drop-shadow(0 0 30px var(--pink));z-index:2}
-#love h1{margin:24px 0 0;z-index:2;font-size:2rem}
-@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.15)}30%{transform:scale(1)}45%{transform:scale(1.1)}}
-.fly{position:fixed;pointer-events:none;z-index:1;will-change:transform,opacity}
+/* game */
+#hud{position:fixed;top:calc(env(safe-area-inset-top) + 12px);left:16px;right:16px;display:flex;justify-content:space-between;font-size:1.3rem;pointer-events:none;z-index:2}
+#govl{position:fixed;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;background:rgba(42,10,24,.88)}
+#govl.off{display:none}
+#govl h1{margin-bottom:14px;font-size:2rem}
+#govl p{font-size:1.15rem;line-height:1.4;margin:0 0 26px;max-width:20em;opacity:.9}
+/* scratch */
+#card{position:relative;width:min(88vw,340px);height:230px;border-radius:18px;overflow:hidden;box-shadow:0 10px 40px rgba(255,92,138,.35);touch-action:none}
+#msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#ff5c8a,#ff8fab);color:#2a0a18}
+#msg b{font-size:1.6rem;line-height:1.25;font-style:italic;font-weight:400}
+#cs{position:absolute;inset:0;width:100%;height:100%;transition:opacity 1s}
+#cs.gone{opacity:0;pointer-events:none}
+#shint{margin-top:18px;opacity:.7;font-style:italic}
+#next{margin-top:22px;display:none}
+.f{position:fixed;top:-40px;pointer-events:none;animation:fall linear forwards;z-index:5}
+@keyframes fall{to{transform:translateY(115vh) rotate(360deg)}}
 /* windows */
 #err{background:#008080;font-family:"Segoe UI",Tahoma,Arial,sans-serif;color:#000}
 .win{width:min(92vw,360px);background:#f0f0f0;border:1px solid #0a246a;box-shadow:6px 6px 0 rgba(0,0,0,.35);text-align:left;animation:pop .25s}
@@ -35,114 +42,220 @@ button:active{transform:scale(.96)}
 .win .ico{flex:none;width:34px;height:34px;border-radius:50%;background:#d00;color:#fff;font-weight:700;display:grid;place-items:center}
 .win .btns{padding:0 18px 16px;text-align:right}
 .win button{font-family:inherit;font-size:.95rem;padding:5px 22px;border-radius:2px;border:1px solid #444;background:#e1e1e1;color:#000}
-#bsod{background:#0078d7;color:#fff;font-family:"Segoe UI",Tahoma,Arial,sans-serif;align-items:flex-start;text-align:left;justify-content:center}
-#bsod .face{font-size:6rem;line-height:1;margin-bottom:12px}
-#bsod p{font-size:1.1rem;line-height:1.5;margin:0 0 14px;max-width:26em}
-#bsod small{opacity:.85}
-#bsod button{border-radius:0;border:2px solid #fff;font-family:inherit;font-size:1rem;margin-top:14px}
 .shake{animation:shake .4s 3}
 @keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-@media (prefers-reduced-motion:reduce){#love .big{animation:none}}
-</style>
-</head>
-<body>
+#bsod{background:#0078d7;color:#fff;font-family:"Segoe UI",Tahoma,Arial,sans-serif;align-items:flex-start;text-align:left}
+#bsod .face{font-size:6rem;line-height:1;margin-bottom:12px}
+#bsod p{font-size:1.1rem;line-height:1.5;margin:0 0 14px;max-width:26em}
+#bsod button{border-radius:0;border:2px solid #fff;font-family:inherit;font-size:1rem;margin-top:14px;display:none}
+/* hearts scenes */
+#pt{position:fixed;left:0;right:0;top:42%;transform:translateY(-50%);text-align:center;opacity:0;transition:opacity 2.5s;pointer-events:none}
+#pt.on{opacity:1}
+#pt b{display:block;font-weight:400;font-size:1.7rem;letter-spacing:.25em;text-indent:.25em;color:#ffe3ea}
+#pt i{display:block;margin-top:10px;font-size:.62rem;letter-spacing:.35em;text-indent:.35em;color:#ff6b8b;text-transform:uppercase;font-style:normal}
+.hint{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 28px);text-align:center;font:italic 1.1rem Georgia,serif;opacity:0;transition:opacity 1.5s;pointer-events:none}
+.hint.on{opacity:.8}
+#pHint{color:#ffb3c6}#bHint{color:#8fd8ff}
+#bt{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 40px);text-align:center;font-size:1.8rem;font-style:italic;color:#cfeaff;text-shadow:0 0 18px #1e90ff;pointer-events:none}
+</style></head><body>
 
-<div class="screen on" id="q1">
-  <h1>Ты готова?</h1>
-  <div class="row"><button class="yes" id="q1y">Да</button><button id="q1n">Нет</button></div>
+<div class="screen on" id="q1"><h1>Ты готова?</h1><div class="row"><button class="yes" id="q1y">Да</button><button id="q1n">Нет</button></div></div>
+<div class="screen" id="wait"><p>Тогда зайди, когда будешь готова</p></div>
+
+<div class="screen" id="game">
+  <canvas class="full" id="cg"></canvas>
+  <div id="hud"><span id="gs">❤️ 0 / 67</span><span id="gl">❤️❤️❤️</span></div>
+  <div id="govl"><h1>Сначала маленькая игра</h1><p>Води пальцем влево-вправо. Лови ❤️, а разбитых 💔 избегай. Поймай 15!</p><button class="yes" id="gGo">Играть</button></div>
 </div>
 
-<div class="screen" id="wait">
-  <p>Тогда зайди, когда будешь готова</p>
+<div class="screen" id="scr">
+  <h1 style="font-size:1.8rem;margin-bottom:22px">У меня для тебя сюрприз</h1>
+  <div id="card"><div id="msg"><b>Ты самое лучшее, что случилось со мной</b><span style="font-size:2rem;margin-top:10px">❤️</span></div><canvas id="cs"></canvas></div>
+  <div id="shint">Сотри пальцем серый слой</div>
+  <button class="yes" id="next">Дальше</button>
 </div>
 
-<div class="screen" id="q2">
-  <h1>Ты готова стать моей девушкой?</h1>
-  <div class="row"><button class="yes" id="q2y">Да</button><button id="q2n">Нет</button></div>
-</div>
+<div class="screen" id="q2"><h1>Ты готова стать моей девушкой?</h1><div class="row"><button class="yes" id="q2y">Да</button><button id="q2n">Нет</button></div></div>
 
-<div class="screen" id="love">
-  <svg class="big" viewBox="0 0 32 29" aria-hidden="true"><path fill="#ff5c8a" d="M23.6 0c-2.9 0-5.4 1.6-7.6 4.4C13.800 1.600 11.300 0 8.400 0 3.700 0 0 3.800 0 8.600 0 17 14 27.200 16 29c2-1.800 16-12 16-20.400C32 3.800 28.300 0 23.600 0z"/></svg>
-  <h1>Я люблю тебя</h1>
-</div>
+<div class="screen" id="err"><div class="win"><div class="bar"><span>Windows</span><span>✕</span></div><div class="body"><div class="ico">✕</div><div>Критическая ошибка 0x0000LOVE.<br>Ответ «нет» не поддерживается системой.</div></div><div class="btns"><button disabled>OK</button></div></div></div>
+<div class="screen" id="bsod"><div class="face">:(</div><p>На вашем устройстве возникла проблема, и его необходимо перезапустить.</p><p id="pct">Сбор данных об ошибке: 0%</p><small>Код остановки: HEART_NOT_FOUND</small><button id="restart">Перезапустить</button></div>
 
-<div class="screen" id="err">
-  <div class="win">
-    <div class="bar"><span>Windows</span><span>✕</span></div>
-    <div class="body"><div class="ico">✕</div><div>Критическая ошибка 0x0000LOVE.<br>Ответ «нет» не поддерживается системой.</div></div>
-    <div class="btns"><button disabled>OK</button></div>
-  </div>
-</div>
-
-<div class="screen" id="bsod">
-  <div class="face">:(</div>
-  <p>На вашем устройстве возникла проблема, и его необходимо перезапустить.</p>
-  <p id="pct">Сбор данных об ошибке: 0%</p>
-  <small>Код остановки: HEART_NOT_FOUND</small>
-  <button id="restart" style="display:none">Перезапустить</button>
-</div>
+<div class="screen" id="pink" style="background:#000;padding:0"><canvas class="full" id="cp"></canvas>
+  <div id="pt"><b>ТЫ И Я</b><i>написано в звёздах</i></div><div class="hint" id="pHint">Коснись, чтобы продолжить</div></div>
+<div class="screen" id="blue" style="background:#000;padding:0"><canvas class="full" id="cb"></canvas>
+  <div id="bt">Я люблю тебя</div><div class="hint on" id="bHint">Коснись сердца</div></div>
 
 <script>
-// ВПИШИ СЮДА свой секретный топик из приложения ntfy (любая длинная случайная строка)
-var TOPIC = "lyubov-8f3k2x9q";
-
-function ping(msg){
-  try{ fetch("https://ntfy.sh/"+TOPIC,{method:"POST",body:msg,mode:"no-cors",keepalive:true}); }catch(e){}
-}
-var $ = function(id){return document.getElementById(id)};
-function show(id){
-  document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("on")});
-  $(id).classList.add("on");
-}
-
+// Впиши свой секретный топик из приложения ntfy
+var TOPIC="lyubov-8f3k2x9q";
+function ping(m){try{fetch("https://ntfy.sh/"+TOPIC,{method:"POST",body:m,mode:"no-cors",keepalive:true})}catch(e){}}
+const $=id=>document.getElementById(id),D=Math.min(devicePixelRatio||1,2);
+let W,H;const CV=['cg','cp','cb'].map($);
+function rs(){W=innerWidth;H=innerHeight;CV.forEach(c=>{c.width=W*D;c.height=H*D;c.getContext('2d').setTransform(D,0,0,D,0,0)})}
+addEventListener('resize',rs);rs();
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));$(id).classList.add('on')}
 ping("👀 Она открыла сайт");
 
-$("q1y").onclick = function(){ ping("✅ «Ты готова?» — ДА"); show("q2"); };
-$("q1n").onclick = function(){ ping("⏳ «Ты готова?» — НЕТ"); show("wait"); };
-$("q2n").onclick = function(){ ping("💔 «Стать моей девушкой?» — НЕТ (показана ошибка Windows)"); crash(); };
-$("q2y").onclick = function(){ ping("💖💖💖 «Стать моей девушкой?» — ДА!!!"); show("love"); hearts(); };
-$("restart").onclick = function(){ ping("🔄 Она перезапустила систему"); show("q2"); };
-
+// ---------- вопросы ----------
+$('q1y').onclick=()=>{ping("✅ «Ты готова?» — ДА");show('game')};
+$('q1n').onclick=()=>{ping("⏳ «Ты готова?» — НЕТ");show('wait')};
+$('q2n').onclick=()=>{ping("💔 «Стать моей девушкой?» — НЕТ (ошибка Windows)");crash()};
+$('q2y').onclick=()=>{ping("💖💖💖 «Стать моей девушкой?» — ДА!!!");show('pink');Pink.start()};
+$('restart').onclick=()=>{ping("🔄 Она перезапустила систему");show('q2')};
 function crash(){
-  show("err");
-  document.querySelector(".win").classList.add("shake");
-  setTimeout(function(){
-    show("bsod");
-    var n=0, el=$("pct"), b=$("restart");
-    b.style.display="none";
-    var t=setInterval(function(){
-      n+=Math.ceil(Math.random()*12);
-      if(n>=100){n=100;clearInterval(t);b.style.display="inline-block";el.textContent="Требуется перезапуск.";return}
-      el.textContent="Сбор данных об ошибке: "+n+"%";
-    },250);
-  },2200);
+  show('err');document.querySelector('.win').classList.add('shake');
+  setTimeout(()=>{show('bsod');let n=0;const el=$('pct'),b=$('restart');b.style.display='none';
+    const t=setInterval(()=>{n+=Math.ceil(Math.random()*12);if(n>=100){clearInterval(t);b.style.display='inline-block';el.textContent='Требуется перезапуск.';return}el.textContent='Сбор данных об ошибке: '+n+'%'},250)},2200);
 }
 
-var EM=["❤️","💖","💕","💗","💘","💝"];
-function fly(x,y,dx,dy,size,dur){
-  var d=document.createElement("div");
-  d.className="fly";d.textContent=EM[Math.floor(Math.random()*EM.length)];
-  d.style.cssText+="left:"+x+"px;top:"+y+"px;font-size:"+size+"px";
-  document.body.appendChild(d);
-  d.animate([{transform:"translate(0,0) scale(.3)",opacity:1},{transform:"translate("+dx+"px,"+dy+"px) scale(1) rotate("+(Math.random()*80-40)+"deg)",opacity:0}],{duration:dur,easing:"ease-out"}).onfinish=function(){d.remove()};
-}
-function hearts(){
-  var W=innerWidth,H=innerHeight,r=Math.random;
-  // взрыв из центра
-  for(var i=0;i<50;i++){var a=r()*6.28,s=150+r()*Math.max(W,H)*.6;fly(W/2,H/2,Math.cos(a)*s,Math.sin(a)*s,20+r()*30,1500+r()*1500)}
-  // сердечки отовсюду
-  var c=0,t=setInterval(function(){
-    for(var k=0;k<3;k++){
-      var side=Math.floor(r()*4),x,y,dx,dy;
-      if(side==0){x=r()*W;y=H+20;dx=(r()-.5)*120;dy=-(H*.8)}
-      else if(side==1){x=r()*W;y=-20;dx=(r()-.5)*120;dy=H*.8}
-      else if(side==2){x=-20;y=r()*H;dx=W*.8;dy=(r()-.5)*120}
-      else{x=W+20;y=r()*H;dx=-W*.8;dy=(r()-.5)*120}
-      fly(x,y,dx,dy,18+r()*34,2500+r()*2500);
+// ---------- игра ----------
+const Game=(()=>{
+  const c=$('cg'),x=c.getContext('2d'),GOAL=67;
+  let px=0,items,fx,score,lives,on=false,loop=false,spawn,last;
+  c.addEventListener('pointerdown',e=>px=e.clientX);c.addEventListener('pointermove',e=>px=e.clientX);
+  function upd(){$('gs').textContent='❤️ '+score+' / '+GOAL;$('gl').textContent='❤️'.repeat(lives)+'🤍'.repeat(3-lives)}
+  function start(){px=W/2;items=[];fx=[];score=0;lives=3;spawn=0;on=true;upd();$('govl').classList.add('off');ping('🎮 Она начала игру');last=performance.now();if(!loop){loop=true;requestAnimationFrame(frame)}}
+  function end(win){
+    on=false;const o=$('govl');o.classList.remove('off');
+    if(win){o.innerHTML='<h1>Ты поймала моё сердце</h1><p>А теперь тебя ждёт сюрприз ✨</p><button class="yes" id="gGo">Дальше</button>';ping('🏆 Она прошла игру');$('gGo').onclick=()=>{o.classList.add('off');show('scr');Scratch.init()}}
+    else{o.innerHTML='<h1>Ой, сердце разбилось</h1><p>Но можно попробовать ещё раз 💔</p><button class="yes" id="gGo">Ещё раз</button>';ping('💔 Она проиграла, счёт '+score);$('gGo').onclick=start}
+  }
+  $('gGo').onclick=start;
+  function frame(now){
+    if(!on){loop=false;x.clearRect(0,0,W,H);return}
+    requestAnimationFrame(frame);
+    const dt=Math.min((now-last)/1000,.05);last=now;
+    x.clearRect(0,0,W,H);
+    const bw=Math.min(110,W*.3),by=H-120,speed=150+score*9;
+    spawn-=dt;if(spawn<=0){spawn=.75-Math.min(.35,score*.015);items.push({x:30+Math.random()*(W-60),y:-30,bad:Math.random()<.28,s:30+Math.random()*8})}
+    x.textAlign='center';x.textBaseline='middle';
+    for(let i=items.length-1;i>=0;i--){
+      const t=items[i];t.y+=speed*dt;x.font=t.s+'px serif';x.fillText(t.bad?'💔':'❤️',t.x,t.y);
+      if(t.y>by-20&&t.y<by+30&&Math.abs(t.x-px)<bw/2+10){
+        items.splice(i,1);
+        if(t.bad){lives--;if(navigator.vibrate)navigator.vibrate(80);fx.push({x:t.x,y:t.y,t:0,e:'💥'});upd();if(lives<=0){end(false);return}}
+        else{score++;fx.push({x:t.x,y:t.y,t:0,e:'✨'});upd();if(score>=GOAL){end(true);return}}
+      }else if(t.y>H+40)items.splice(i,1);
     }
-    if(++c>400)clearInterval(t);
-  },120);
-}
-</script>
-</body>
-</html>
+    for(let i=fx.length-1;i>=0;i--){const f=fx[i];f.t+=dt;x.globalAlpha=Math.max(0,1-f.t*2);x.font='28px serif';x.fillText(f.e,f.x,f.y-f.t*60);x.globalAlpha=1;if(f.t>.5)fx.splice(i,1)}
+    x.fillStyle='#ff5c8a';x.beginPath();x.moveTo(px-bw/2,by);x.lineTo(px+bw/2,by);x.lineTo(px+bw/2-14,by+36);x.quadraticCurveTo(px,by+46,px-bw/2+14,by+36);x.closePath();x.fill();
+    x.fillStyle='#ffd0dc';x.fillRect(px-bw/2-3,by-4,bw+6,6);
+  }
+  return{};
+})();
+
+// ---------- скретч-карта ----------
+const Scratch=(()=>{
+  const cv=$('cs'),card=$('card'),x=cv.getContext('2d');
+  let down=false,lx,ly,done,started,w,h,tm;
+  function init(){
+    done=false;started=false;cv.classList.remove('gone');$('shint').style.opacity=.7;$('next').style.display='none';
+    w=card.clientWidth;h=card.clientHeight;cv.width=w*D;cv.height=h*D;x.setTransform(D,0,0,D,0,0);x.globalCompositeOperation='source-over';
+    const g=x.createLinearGradient(0,0,w,h);g.addColorStop(0,'#c9ccd1');g.addColorStop(.5,'#eceef1');g.addColorStop(1,'#a9adb4');
+    x.fillStyle=g;x.fillRect(0,0,w,h);x.fillStyle='rgba(0,0,0,.08)';for(let i=0;i<500;i++)x.fillRect(Math.random()*w,Math.random()*h,2,2);
+    x.fillStyle='#6b6f76';x.font='italic 1.5rem Georgia,serif';x.textAlign='center';x.textBaseline='middle';x.fillText('Сотри меня ✨',w/2,h/2);
+    x.globalCompositeOperation='destination-out';x.lineWidth=44;x.lineCap='round';x.lineJoin='round';
+    clearInterval(tm);tm=setInterval(()=>{if(down)check()},400);
+  }
+  const pos=e=>{const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
+  function move(e){if(!down||done)return;const[px,py]=pos(e);x.beginPath();x.moveTo(lx,ly);x.lineTo(px+.01,py);x.stroke();lx=px;ly=py}
+  cv.addEventListener('pointerdown',e=>{down=true;[lx,ly]=pos(e);move(e);if(!started){started=true;ping('✋ Она начала стирать')}});
+  cv.addEventListener('pointermove',move);
+  addEventListener('pointerup',()=>{down=false;check()});addEventListener('pointercancel',()=>down=false);
+  function check(){
+    if(done)return;const d=x.getImageData(0,0,cv.width,cv.height).data;let n=0,t=0;
+    for(let i=3;i<d.length;i+=64){t++;if(d[i]<20)n++}
+    if(n/t>.5){done=true;cv.classList.add('gone');$('shint').style.opacity=0;confetti();ping('🎉 Она открыла сюрприз');setTimeout(()=>$('next').style.display='block',1500)}
+  }
+  function confetti(){const E=['❤️','💖','💕','💗','✨','🌸'];
+    for(let i=0;i<60;i++){const f=document.createElement('div');f.className='f';f.textContent=E[i%6];f.style.left=Math.random()*100+'vw';f.style.fontSize=(18+Math.random()*26)+'px';f.style.animationDuration=(2.5+Math.random()*3)+'s';f.style.animationDelay=Math.random()*1.5+'s';document.body.appendChild(f);setTimeout(()=>f.remove(),8000)}}
+  $('next').onclick=()=>{ping('➡️ Она дошла до главного вопроса');show('q2')};
+  return{init};
+})();
+
+// ---------- розовое сердце ----------
+const Pink=(()=>{
+  const c=$('cp'),x=c.getContext('2d'),tx=$('pt');
+  const S=document.createElement('canvas');S.width=S.height=32;
+  {const s=S.getContext('2d'),g=s.createRadialGradient(16,16,0,16,16,16);g.addColorStop(0,'#fff');g.addColorStop(.25,'rgba(255,120,150,.9)');g.addColorStop(1,'rgba(255,40,90,0)');s.fillStyle=g;s.fillRect(0,0,32,32)}
+  const stars=Array.from({length:120},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.2+.3,p:Math.random()*6}));
+  const heart=t=>[16*Math.pow(Math.sin(t),3),-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))];
+  const ecg=[[0,0],[.36,0],[.40,-.25],[.44,.4],[.5,-1.5],[.55,1.2],[.59,0],[.63,-.25],[.67,0],[1,0]];
+  const TB=1.8;let P,petals,t0,on=false,last;
+  function start(){
+    const N=W<700?800:1200,cx=W/2,cy=H*.42;t0=performance.now();last=t0;petals=[];tx.classList.remove('on');$('pHint').classList.remove('on');
+    P=Array.from({length:N},(_,i)=>{const[a,b]=heart(i/N*6.2832+(Math.random()-.5)*.02),an=Math.random()*6.283,sp=250+Math.random()*900;return{a,b,x:cx,y:cy,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,z:.5+Math.random()*1.2,ph:Math.random()*6}});
+    on=true;requestAnimationFrame(frame);
+  }
+  $('pink').addEventListener('pointerdown',()=>{if(on&&(performance.now()-t0)/1000>6){on=false;show('blue');Blue.start();ping('✨ Она нажала «продолжить»')}});
+  function frame(now){
+    if(!on)return;requestAnimationFrame(frame);
+    const dt=Math.min((now-last)/1000,.05),t=(now-t0)/1000;last=now;
+    const sc=Math.min(W*.9,H*.65)/34,cx=W/2,cy=H*.42;
+    x.globalCompositeOperation='source-over';x.fillStyle='#000';x.fillRect(0,0,W,H);
+    for(const s of stars){x.globalAlpha=.3+.4*Math.sin(t*1.5+s.p);x.fillStyle='#fff';x.fillRect(s.x*W,s.y*H,s.r,s.r)}
+    x.globalAlpha=1;
+    const beat=t>TB+1.2?1+.03*Math.pow(Math.sin(t*2.6)*.5+.5,6):1;
+    x.globalCompositeOperation='lighter';
+    if(t<TB+.5){
+      const p=Math.min(t/TB,1),amp=H*.06;x.strokeStyle='#ff3d6e';x.lineWidth=2;x.shadowColor='#ff3d6e';x.shadowBlur=12;
+      x.beginPath();let hx=0,hy=cy;x.moveTo(0,cy);
+      for(let i=1;i<ecg.length;i++){const[x1,y1]=ecg[i],[x0,y0]=ecg[i-1];
+        if(x1<=p){hx=x1*W;hy=cy+y1*amp;x.lineTo(hx,hy)}else{const f=(p-x0)/(x1-x0);hx=(x0+(x1-x0)*f)*W;hy=cy+(y0+(y1-y0)*f)*amp;x.lineTo(hx,hy);break}}
+      x.stroke();x.shadowBlur=0;if(p<1)x.drawImage(S,hx-14,hy-14,28,28);
+      if(t>TB-.35){x.globalAlpha=Math.min(1,(t-TB+.35)/.35)*Math.max(0,1-(t-TB)/.5);x.fillStyle='#ff5d86';x.fillRect(0,cy-1,W,2);x.fillRect(cx-1,cy-H*.3,2,H*.6);x.globalAlpha=1}
+    }
+    if(t>TB+1){const a=Math.min(1,(t-TB-1)/2)*.35*(beat-.5),g=x.createRadialGradient(cx,cy+sc*2,0,cx,cy+sc*2,sc*17);g.addColorStop(0,'rgba(255,40,90,'+a+')');g.addColorStop(1,'rgba(255,40,90,0)');x.fillStyle=g;x.fillRect(0,0,W,H)}
+    if(t>TB){
+      const bt=t-TB,fly=bt<.8,k=Math.pow(fly?.93:.86,dt*60),sp=fly?0:.03*Math.min(1,(bt-.8)*2);
+      x.strokeStyle='rgba(255,90,130,.55)';x.lineWidth=1;
+      for(const p of P){
+        const ox=p.x,oy=p.y;p.vx+=(cx+p.a*sc*beat-p.x)*sp*dt*60;p.vy+=(cy+p.b*sc*beat-p.y)*sp*dt*60;
+        p.vx*=k;p.vy*=k;p.x+=p.vx*dt;p.y+=p.vy*dt;
+        if(bt<1.6){x.beginPath();x.moveTo(ox,oy);x.lineTo(p.x,p.y);x.stroke()}
+        const s=(p.z*3+Math.sin(t*4+p.ph))*(bt>1.5?1:.8);x.globalAlpha=Math.min(1,bt*4);x.drawImage(S,p.x-s*2,p.y-s*2,s*4,s*4);
+      }
+      x.globalAlpha=1;
+    }
+    if(t>TB+1.8)tx.classList.add('on');if(t>6)$('pHint').classList.add('on');
+    if(t>TB+3&&Math.random()<dt*5)petals.push({x:Math.random()*W,y:-10,vy:30+Math.random()*40,sw:Math.random()*6,r:3+Math.random()*4,a:Math.random()*6});
+    x.globalCompositeOperation='source-over';
+    for(let i=petals.length-1;i>=0;i--){const q=petals[i];q.y+=q.vy*dt;q.x+=Math.sin(t*1.5+q.sw)*20*dt;q.a+=dt*2;if(q.y>H+10){petals.splice(i,1);continue}
+      x.save();x.translate(q.x,q.y);x.rotate(q.a);x.scale(1,.55+.45*Math.sin(q.a*1.7));x.fillStyle='rgba(255,90,130,.85)';x.beginPath();x.ellipse(0,0,q.r*.6,q.r,0,0,6.283);x.fill();x.restore()}
+  }
+  return{start};
+})();
+
+// ---------- синее сердце ----------
+const Blue=(()=>{
+  const c=$('cb'),x=c.getContext('2d'),COL=['#1e90ff','#4db8ff','#8fd8ff','#ffffff','#0b5ed7'];
+  let P,B,m=null,T=0,on=false,last;
+  function start(){
+    const N=W<700?2600:4200,cx=W/2,cy=H*.42,sc=Math.min(W,H*.8)/38;P=[];B=COL.map(()=>[]);
+    for(let i=0;i<N;i++){const t=Math.random()*6.283,s=1-Math.pow(Math.random(),2.2)*.9;
+      const p={a:16*Math.pow(Math.sin(t),3)*s,b:-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))*s,x:Math.random()*W,y:H+Math.random()*100,vx:0,vy:0,ph:Math.random()*6.28,z:.7+Math.random()*1.5};
+      P.push(p);B[(Math.random()*COL.length)|0].push(p)}
+    on=true;last=performance.now();requestAnimationFrame(frame);
+  }
+  const pt=e=>({x:e.clientX,y:e.clientY});
+  c.addEventListener('pointerdown',e=>{m=pt(e);$('bHint').classList.remove('on');ping('💙 Она трогает синее сердце');
+    for(const p of P){const dx=p.x-m.x,dy=p.y-m.y,d=Math.hypot(dx,dy)+1,f=Math.min(1,260/d)*(6+Math.random()*16);p.vx+=dx/d*f+(Math.random()-.5)*6;p.vy+=dy/d*f+(Math.random()-.5)*6}});
+  c.addEventListener('pointermove',e=>{if(m)m=pt(e)});addEventListener('pointerup',()=>m=null);addEventListener('pointercancel',()=>m=null);
+  function frame(now){
+    if(!on)return;requestAnimationFrame(frame);
+    const dt=Math.min((now-last)/16.7,3);last=now;T+=dt/60;
+    const sc=Math.min(W,H*.8)/38,cx=W/2,cy=H*.42,beat=1+.03*Math.pow(Math.sin(T*2.4)*.5+.5,5);
+    x.globalCompositeOperation='source-over';x.fillStyle='rgba(0,0,0,.28)';x.fillRect(0,0,W,H);
+    for(const p of P){
+      const tx=cx+p.a*sc*beat+Math.sin(T*2+p.ph)*1.5,ty=cy+p.b*sc*beat+Math.cos(T*1.7+p.ph)*1.5;
+      p.vx+=(tx-p.x)*.014*dt;p.vy+=(ty-p.y)*.014*dt;
+      if(m){const dx=p.x-m.x,dy=p.y-m.y,d=Math.hypot(dx,dy)+1;if(d<130){const f=(130-d)/130*2.2*dt;p.vx+=dx/d*f-dy/d*f*.8;p.vy+=dy/d*f+dx/d*f*.8}}
+      const k=Math.pow(.9,dt);p.vx*=k;p.vy*=k;p.x+=p.vx*dt;p.y+=p.vy*dt;
+    }
+    x.globalCompositeOperation='lighter';
+    const by=cy+19*sc,pw=.75+.25*Math.sin(T*2.4);
+    x.save();x.translate(cx,by);x.scale(1,.2);
+    const g=x.createRadialGradient(0,0,0,0,0,sc*14);g.addColorStop(0,'rgba(120,220,255,'+pw+')');g.addColorStop(.35,'rgba(30,140,255,'+pw*.7+')');g.addColorStop(1,'rgba(0,60,200,0)');
+    x.fillStyle=g;x.beginPath();x.arc(0,0,sc*14,0,6.283);x.fill();x.restore();
+    for(let i=0;i<COL.length;i++){x.fillStyle=COL[i];for(const p of B[i]){x.globalAlpha=.6+.4*Math.sin(T*5+p.ph*3);x.fillRect(p.x,p.y,p.z,p.z)}}
+    x
